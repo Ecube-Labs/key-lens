@@ -1,0 +1,43 @@
+{
+  "name": "key-lens",
+  "displayName": "key-lens",
+  "description": "Visulaize key mapped values in your code",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "key-lens.toggle",
+        "title": "Key-Lens: Toggle"
+      },
+      {
+        "command": "key-lens.refresh",
+        "title": "Key-Lens: Refresh"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "vscode:package": "vsce package --out package",
+    "compile": "tsc -p ./",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.101.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
