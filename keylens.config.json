@@ -1,4 +1,0 @@
-{
-  "paths": ["locales/ko.json"],
-  "filePatterns": ["*.ts", "*.js", "*.tsx", "*.jsx"]
-}

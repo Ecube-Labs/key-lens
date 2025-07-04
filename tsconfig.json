@@ -21,7 +21,7 @@
     "inlineSources": true,
     "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "dist",
+    "outDir": "out",
     "useUnknownInCatchVariables": false,
     "typeRoots": ["./node_modules/@types", "src/@types"]
   }
