@@ -14,8 +14,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "key-lens.toggle",
-        "title": "Key-Lens: Toggle"
+        "command": "key-lens.disable",
+        "title": "Key-Lens: Disable"
+      },
+      {
+        "command": "key-lens.enable",
+        "title": "Key-Lens: Enable"
       },
       {
         "command": "key-lens.refresh",

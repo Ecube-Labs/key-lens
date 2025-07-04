@@ -1,13 +1,9 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { KeyLensProvider } from "./key-lens-provider";
 
 export function activate(context: vscode.ExtensionContext) {
   const keyLensProvider = new KeyLensProvider();
-  let updateTimeout: NodeJS.Timeout | undefined;
 
-  // Load mappings asynchronously and then update decorations
   keyLensProvider.loadKeyValueMappings().then(() => {
     const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor) {

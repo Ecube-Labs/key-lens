@@ -4,7 +4,7 @@ import * as path from "path";
 
 interface KeyLensConfig {
   paths: string[];
-  targets?: string[];
+  extensions?: string[];
 }
 
 interface KeyValueMap {
@@ -95,13 +95,13 @@ export class KeyLensProvider {
   }
 
   private shouldApplyToFile(fileName: string): boolean {
-    if (!this.config || !this.config.targets) {
-      return true; // Apply to all targets if no patterns specified
+    if (!this.config || !this.config.extensions) {
+      return true; // Apply to all extensions if no patterns specified
     }
 
-    return this.config.targets.some((pattern: string) => {
-      const regex = new RegExp(pattern.replace(/\*/g, ".*"));
-      return regex.test(fileName);
+    const fileExtension = path.extname(fileName).slice(1);
+    return this.config.extensions.some((extension: string) => {
+      return fileExtension === extension;
     });
   }
 
@@ -184,13 +184,6 @@ export class KeyLensProvider {
       }
       vscode.window.showInformationMessage("Key-Lens refreshed");
     });
-  }
-
-  hideDecorations() {
-    const editor = vscode.window.activeTextEditor;
-    if (editor) {
-      editor.setDecorations(this.decorationType, []);
-    }
   }
 
   hideDecorationsForLine(lineNumber: number) {
