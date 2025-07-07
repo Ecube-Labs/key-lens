@@ -1,0 +1,6 @@
+{
+  "button.save": "저장",
+  "button.cancel": "취소",
+  "message.success": "작업이 성공적으로 완료되었습니다",
+  "error.notFound": "항목을 찾을 수 없습니다"
+}

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
+import { glob } from "glob";
 
 interface KeyLensConfig {
   paths: string[];
@@ -56,18 +57,25 @@ export class KeyLensProvider {
         return;
       }
 
-      for (const relativePath of this.config.paths) {
-        const fullPath = path.join(workspaceFolder.uri.fsPath, relativePath);
+      for (const pathPattern of this.config.paths) {
+        // Use glob to find all files matching the pattern
+        const matchedFiles = await glob(pathPattern, {
+          cwd: workspaceFolder.uri.fsPath,
+          absolute: true,
+          nodir: true,
+        });
 
-        if (fs.existsSync(fullPath)) {
-          try {
-            const jsonContent = fs.readFileSync(fullPath, "utf8");
-            const data = JSON.parse(jsonContent);
+        for (const filePath of matchedFiles) {
+          if (fs.existsSync(filePath)) {
+            try {
+              const jsonContent = fs.readFileSync(filePath, "utf8");
+              const data = JSON.parse(jsonContent);
 
-            // Flatten nested objects with dot notation
-            this.flattenObject(data, "", this.keyValueMap);
-          } catch (error) {
-            console.error(`Error reading JSON file ${fullPath}:`, error);
+              // Flatten nested objects with dot notation
+              this.flattenObject(data, "", this.keyValueMap);
+            } catch (error) {
+              console.error(`Error reading JSON file ${filePath}:`, error);
+            }
           }
         }
       }
@@ -105,8 +113,17 @@ export class KeyLensProvider {
     });
   }
 
+  private isKeyMappingLoaded(): boolean {
+    return Object.keys(this.keyValueMap).length > 0;
+  }
+
   updateDecorations(editor: vscode.TextEditor) {
     if (!this.isEnabled || !editor) {
+      return;
+    }
+
+    // If key mapping is not loaded yet, skip decoration
+    if (!this.isKeyMappingLoaded()) {
       return;
     }
 

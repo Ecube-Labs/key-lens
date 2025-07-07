@@ -1,4 +1,4 @@
 {
-  "paths": ["locales/ko.json"],
-  "types": ["js", "ts", "jsx", "tsx"]
+  "paths": ["locales/*.json"],
+  "extensions": ["js", "ts", "jsx", "tsx"]
 }
