@@ -58,7 +58,6 @@ export class KeyLensProvider {
       }
 
       for (const pathPattern of this.config.paths) {
-        // Use glob to find all files matching the pattern
         const matchedFiles = await glob(pathPattern, {
           cwd: workspaceFolder.uri.fsPath,
           absolute: true,
@@ -70,17 +69,24 @@ export class KeyLensProvider {
             try {
               const jsonContent = fs.readFileSync(filePath, "utf8");
               const data = JSON.parse(jsonContent);
-
-              // Flatten nested objects with dot notation
               this.flattenObject(data, "", this.keyValueMap);
             } catch (error) {
-              console.error(`Error reading JSON file ${filePath}:`, error);
+              vscode.window.showInformationMessage(
+                `Error reading JSON file ${filePath}:`,
+                error
+              );
             }
+          } else {
+            vscode.window.showInformationMessage(
+              `File does not exist: ${filePath}`
+            );
           }
         }
       }
     } catch (error) {
-      console.error("Error reading keylens.config.json:", error);
+      vscode.window.showInformationMessage(
+        `Error reading keylens.config.json: ${error}`
+      );
     }
   }
 
@@ -118,19 +124,41 @@ export class KeyLensProvider {
   }
 
   updateDecorations(editor: vscode.TextEditor) {
+    console.log(
+      "[Key-Lens] updateDecorations called for:",
+      editor.document.fileName
+    );
+
     if (!this.isEnabled || !editor) {
+      console.log("[Key-Lens] Skipped - Extension disabled or no editor");
       return;
     }
 
     // If key mapping is not loaded yet, skip decoration
     if (!this.isKeyMappingLoaded()) {
+      console.log(
+        "[Key-Lens] Skipped - Key mappings not loaded yet. Keys available:",
+        Object.keys(this.keyValueMap).length
+      );
       return;
     }
 
     const fileName = path.basename(editor.document.fileName);
     if (!this.shouldApplyToFile(fileName)) {
+      console.log(
+        "[Key-Lens] Skipped - File extension not supported:",
+        fileName,
+        "Config extensions:",
+        this.config?.extensions
+      );
       return;
     }
+
+    console.log("[Key-Lens] Processing decorations for file:", fileName);
+    console.log(
+      "[Key-Lens] Available keys:",
+      Object.keys(this.keyValueMap).length
+    );
 
     const text = editor.document.getText();
     const decorations: vscode.DecorationOptions[] = [];
@@ -166,6 +194,7 @@ export class KeyLensProvider {
       }
     }
 
+    console.log("[Key-Lens] Applied decorations count:", decorations.length);
     this.activeDecorations = decorations;
     editor.setDecorations(this.decorationType, decorations);
   }
